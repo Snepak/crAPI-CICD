@@ -1,0 +1,50 @@
+{
+  "version": "1.1.0",
+  "applicationId": "48fb6a51-7b37-42a8-8920-819c022be4e7",
+  "host": "http://localhost:8888",
+  "sources": [
+    {
+      "name": "OAS",
+      "openApi": {
+        "sourcePath": "/noname/crapi-spec.json"
+      },
+      "auth_mappings": []
+    }
+  ],
+  "auths": [
+    {
+      "name": "Jane doe",
+      "role": "reader / writer",
+      "mappings": [
+        {
+          "type": "header",
+          "value": "Bearer {{Jane Doe}}",
+          "key": "Authorization "
+        },
+        {
+          "type": "",
+          "value": "",
+          "key": ""
+        }
+      ]
+    }
+  ],
+  "app": {
+    "secrets": [
+      {
+        "name": "Jane Doe",
+        "type": "postman",
+        "data": {
+          "sourceBody": "$.token"
+        }
+      },
+      {
+        "name": "John Smith",
+        "type": "postman",
+        "data": {
+          "sourceBody": "$.token"
+        }
+      }
+    ]
+  }
+}
