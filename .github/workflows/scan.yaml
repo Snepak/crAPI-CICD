@@ -1,0 +1,55 @@
+name: crAPI CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+env:
+  ACTIVE_API_URL: "https://demo1.nonamesec.com/active"
+  ACTIVE_REGISTRY_URL: "us-central1-docker.pkg.dev/noname-artifacts/nns-docker"
+  ACTIVE_BACKEND_URI: "https://demo1.nonamesec.com/”
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Start local server (Docker Compose)
+        run: docker-compose up -d
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ docker.io }}
+          username: ${{ secrets.ACTIVE_REGISTRY_USER }}
+          password: ${{ secrets.ACTIVE_REGISTRY_PASSWORD }}
+
+      - name: Active Testing Scan
+        run: |
+          VERSION=$(curl -k "${{ env.ACTIVE_API_URL }}/backend/version")
+          docker run \
+            --add-host=host.docker.internal:host-gateway \
+            -e ACTIVE_CONFIG_FILE_PATH=/config/active-config.yaml \
+            -e ACTIVE_BACKEND_URI=${{ env.ACTIVE_BACKEND_URI }} \
+            -v ${{ github.workspace }}/noname:/config \
+            ${{ env.ACTIVE_REGISTRY_URL }}/active-cli:$VERSION scan \
+            --api-url=${{ env.ACTIVE_API_URL }} \
+            --api-token=${{ secrets.ACTIVE_API_TOKEN }} \
+            --test-group-id=<ACTIVE_TEST_GROUP_ID> \
+            --branch-name=${{ github.head_ref || github.ref_name }} \
+            --severity-threshold=<SEVERITY_THRESHOLD>
+
+  deploy:
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo "Security scan passed, deploying to production"
