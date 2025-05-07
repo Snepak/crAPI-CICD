@@ -28,7 +28,7 @@ jobs:
       - name: Docker login
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.ACTIVE_REGISTRY_URL  }}
+          registry: ${{ env.ACTIVE_REGISTRY_URL }}
           username: ${{ secrets.ACTIVE_REGISTRY_USER }}
           password: ${{ secrets.ACTIVE_REGISTRY_PASSWORD }}
 
