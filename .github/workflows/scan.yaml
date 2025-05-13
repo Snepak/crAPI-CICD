@@ -2,9 +2,6 @@ name: crAPI CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - master
-      - develop
 
 env:
   ACTIVE_API_URL: "https://demo1.nonamesec.com/active"
