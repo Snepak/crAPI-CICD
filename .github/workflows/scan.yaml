@@ -16,14 +16,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build images
+        run: ./deploy/docker/build-all.sh
+        env:
+          DOCKER_REPO: location
+          VERSION: testing
+    
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Start local server (Docker Compose)
-        run: docker-compose up -d
+    #  - name: Start local server (Docker Compose)
+   #     run: docker-compose up -d
 
       - name: Docker login
         uses: docker/login-action@v1
